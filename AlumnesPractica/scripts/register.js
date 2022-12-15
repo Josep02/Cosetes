@@ -48,12 +48,12 @@ function validarPassword() {
 }
 
 function validar(e) {
+    e.preventDefault();
     esborrarError();
     if (validarNom() && validarEmail() && validarPassword() && confirm("Confirmar enviament del formulari")) {
-        location.href = "index.html";
+        register();
         return true;
     } else {
-        e.preventDefault();
         return false;
     }
 }
@@ -66,19 +66,32 @@ function error2(element, missatge) {
 
 function esborrarError() {
     var formulari = document.forms[0];
-    for (var i = 0; i < formulari.elements.length -1; i++) {
+    for (var i = 0; i < formulari.elements.length - 1; i++) {
         formulari.elements[i].className = "form-control";
     }
 }
 
-
-
-
 function register() {
+    var nom = document.getElementById("nom").value;
+    var email = document.getElementById("email").value;
+    var password = document.getElementById("password").value;
 
-    fetch('', {
+    let user = {
+        name: nom,
+        email: email,
+        password: password
+    }
+
+    fetch('https://userprofile.serverred.es/api/register', {
         method: 'POST',
-
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
     })
-
+    .then(response=> response.json())
+    .then(user => {
+        console.log("Succes:", user);
+        document.getElementById("missatgeError").innerHTML = user.error;
+    })
 }
